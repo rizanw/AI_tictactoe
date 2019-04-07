@@ -2,25 +2,26 @@ import pygame
 import sys
 
 #constanta
-WindowWidth = 640
-WindowHeight = 480
+WindowWidth = 840
+WindowHeight = 540
 screenSize = [WindowWidth, WindowHeight]
 FPS = 30
 BoxSize = 100
 GapSize = 10
 BoardHeight = 3
 BoardWidth = 3
-PlayerMark = 'X'
-CompMark = 'O'
-XMargin = int((WindowWidth - (BoardWidth * (BoxSize + GapSize))) / 2)
-YMargin = int((WindowHeight - (BoardWidth * (BoxSize + GapSize))) / 2)
 
-#           R     G       B
-White   = (255, 255,    255)
-Black   = (0,     0,      0)
-Grey    = (100, 100,    100)
+XMargin = int(BoxSize/2)
+YMargin = int(BoxSize)
 
-BGColor = White
+#           R    G    B
+White   = (255, 255, 255)
+Black   = (0,   0,   0)
+Grey    = (100, 100, 100)
+BGrey   = (45,  46,  48)
+GWhite  = (206, 207, 209)
+
+BGColor = BGrey
 BoxColor = BGColor
 LineColor = Black
 
@@ -29,39 +30,46 @@ pygame.init()
 pygame.display.set_caption('TicTacToe with ABP')
 screen = pygame.display.set_mode(screenSize)
 clock = pygame.time.Clock()
-screen.fill(White)
+screen.fill(BGColor)
+
+#font
+bigFont = pygame.font.SysFont('Helvatica', 90)
+regFont = pygame.font.SysFont('Helvatica', 24)
 
 def drawLines():
+    LinesColor = GWhite
+
     #Draw Vertical Lines
-    left = XMargin + BoxSize
-    top = YMargin
+    verLen = XMargin + BoxSize
+    horLen = YMargin
     width = GapSize
     height = (BoxSize + GapSize) * BoardHeight
 
-    verRect1 = pygame.Rect(left, top, width, height)
-    pygame.draw.rect(screen, Grey, verRect1)
-
-    verRect2 = pygame.Rect(left + BoxSize + GapSize, top, width, height)
-    pygame.draw.rect(screen, Grey, verRect2)
+    pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen, width, height))
+    pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen + BoxSize + GapSize, horLen, width, height))
+    pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen - BoxSize - GapSize, horLen, width, height))
+    pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen + (BoxSize + GapSize) * 2, horLen, width, height))
 
     #Draw Horizontal Lines
-    left = XMargin
-    top = YMargin + BoxSize
+    verLen = XMargin
+    horLen = YMargin + BoxSize
     width = (BoxSize + GapSize) * BoardWidth
     height = GapSize
 
-    horRect1 = pygame.Rect(left, top, width, height)
-    pygame.draw.rect(screen, Grey, horRect1)
-    horRect2 = pygame.Rect(left, top + BoxSize + GapSize, width, height)
-    pygame.draw.rect(screen, Grey, horRect2)
+    pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen, width, height))
+    pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen + BoxSize + GapSize, width, height))
+    pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen + (BoxSize + GapSize) * 2, width, height))
+    pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen - BoxSize - GapSize, width, height))
 
 def usedBoxChecked(pos):
+    # Marking used boxes
     Boxes = []
     for i in range(BoardWidth):
         Boxes.append([pos] * BoardHeight)
     return Boxes
 
 def drawScore(font, dScore, pScore, cScore):
+    # draw score board
     scoreBoard = font.render(
         'Draw: ' + str(dScore) + '  ' + 'Player: ' + str(pScore) + '    ' + 'Computer: ' + str(cScore),
         True,
@@ -69,55 +77,91 @@ def drawScore(font, dScore, pScore, cScore):
         BGColor
     )
     scoreBoardRect = scoreBoard.get_rect()
-    scoreBoardRect.x = 0
-    scoreBoardRect.y = 0
+    scoreBoardRect.x = WindowWidth - 300
+    scoreBoardRect.y = WindowHeight - 300
     screen.blit(scoreBoard, scoreBoardRect)
+
+def getCornerBox(boxx, boxy):
+    left = boxx * (BoxSize + GapSize) + XMargin
+    top = boxy * (BoxSize + GapSize) + YMargin
+    return left, top
+
+def getCoordinate(x, y):
+    for boxx in range(BoardWidth):
+        for boxy in range(BoardHeight):
+            left, top = getCornerBox(boxx, boxy)
+            boxRect = pygame.Rect(left, top, BoxSize, BoxSize)
+            if boxRect.collidepoint(x, y):
+                return (boxx, boxy)
+    return (None, None)
+
+def getCenterBox(Xpt, Ypt):
+    centerx = Xpt * (BoxSize + GapSize) + XMargin + (BoxSize / 2)
+    centery = Ypt * (BoxSize + GapSize) + YMargin + (BoxSize / 2) + 5
+    return centerx, centery
+
+def XMarker(XX, XY, font):
+    Xpt, Ypt = getCenterBox(XX, XY)
+    mark = font.render('X', True, Grey)
+    markRect = mark.get_rect()
+    markRect.centerx = Xpt
+    markRect.centery = Ypt
+    screen.blit(mark, markRect)
+
+def OMarker(XX, XY, font):
+    Xpt, Ypt = getCenterBox(XX, XY)
+    mark = font.render('O', True, Grey)
+    markRect = mark.get_rect()
+    markRect.centerx = Xpt
+    markRect.centery = Ypt
+    screen.blit(mark, markRect)
 
 def main():
     done = False
-    is_blue = True
 
-    x = 30
-    y = 30
+    XMouse = 0
+    YMouse = 0
 
-    smallFont = pygame.font.SysFont('Helvatica', 40)
+    mainBoard = usedBoxChecked(False)
+    chekedBox = usedBoxChecked(False)
 
     pScore = 0
     cScore = 0
     dScore = 0
 
     drawLines()
+
     while not done:
-        drawScore(font=smallFont, dScore=dScore, pScore=pScore, cScore=cScore)
+        drawScore(font=regFont, dScore=dScore, pScore=pScore, cScore=cScore)
         mouseClicked = False
+        pTurn = True
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.K_UP  and event.key == pygame.K_ESCAPE):
+            if event.type == pygame.QUIT or (event.type == pygame.K_UP and event.key == pygame.K_ESCAPE):
                 pygame.quit()
                 sys.exit()
 
+            elif event.type == pygame.MOUSEMOTION:
+                XMouse, YMouse = event.pos
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                is_blue = not is_blue
+            elif event.type == pygame.MOUSEBUTTONUP:
+                XMouse, YMouse = event.pos
+                mouseClicked = True
 
-        pressed = pygame.key.get_pressed()
-        if pressed[pygame.K_UP]: y -= 3
-        if pressed[pygame.K_DOWN]: y += 3
-        if pressed[pygame.K_LEFT]: x -= 3
-        if pressed[pygame.K_RIGHT]: x += 3
+        boxx, boxy = getCoordinate(XMouse, YMouse)
 
-        # screen.fill((255, 255, 255))
-        if is_blue:
-            color = (0, 128, 255)
-        else:
-            color = (255, 100, 0)
-        pygame.draw.rect(screen, color, pygame.Rect(x, y, 60, 60))
+        print(boxx, boxy)
+
+        if boxx != None and boxy != None:
+            if not chekedBox[boxx][boxy] and mouseClicked and pTurn == True:
+                XMarker(boxx, boxy, font=bigFont)
+                chekedBox[boxx][boxy] = True
+                mainBoard[boxx][boxy] = 'X'
+                pTurn = False
+                pygame.display.update()
 
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(FPS)
 
 
 if __name__ == '__main__':
