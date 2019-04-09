@@ -103,6 +103,114 @@ class abp:
         print(move, best)
         return move
 
+class alphabeta:
+    def __init__(self):
+        pass
+
+    def usedBoxChecked(self, pos):
+        # Marking used boxes
+        Boxes = []
+        for i in range(ui.BoardWidth):
+            Boxes.append([pos] * ui.BoardHeight)
+
+        return Boxes
+
+    def evaluate(self, board):
+        #check vertical
+        for i in range(len(board)):
+            if board[i][0] == board[i][1] and board[i][1] == board[i][2] :
+                if board[i][0] == 'X':
+                    # print("+10")
+                    return -10
+                if board[i][0] == "O":
+                    # print("-10")
+                    return +10
+
+        for i in range(len(board)):
+            if board[0][i] == board[1][i] and board[1][i] == board[2][i] :
+                if board[0][i] == 'X':
+                    # print("+10")
+                    return -10
+                if board[0][i] == "O":
+                    # print("-10")
+                    return +10
+
+        if board[0][0] == board[1][1] and board[1][1] == board[2][2]:
+            if board[0][0] == 'X':
+                # print("+10")
+                return -10
+            elif board[0][0] == 'O':
+                return +10
+
+        if board[0][2] == board[1][1] and board[1][1] == board[2][0]:
+            if board[0][2] == 'X':
+                return -10
+            elif board[0][2] == 'O':
+                return +10
+
+    def isMovesLeft(self, board):
+
+        for col in range(len(board)):
+            for row in range(len(board[col])):
+                if board[col][row] == False:
+                    return True
+
+        return False
+
+    def minimax(self, board, depth, isMax):
+        score = self.evaluate(board)
+
+        if score is 10:
+            return score
+
+        if score is -10:
+            return score
+
+        if self.isMovesLeft(board) == False:
+            return 0
+
+        if isMax:
+            best = -1000
+            for i in range(len(board)):
+                for j in range(len(board[i])):
+                    if board[i][j] == False:
+                        board[i][j] = 'O'
+                        best = max(best, self.minimax(board, depth+1, not isMax))
+                        board[i][j] = False
+            return best
+        else:
+            best = 1000
+            for i in range(len(board)):
+                for j in range(len(board[i])):
+                    if board[i][j] == False:
+                        board[i][j] = 'X'
+                        best = min(best, self.minimax(board, depth+1, not isMax))
+                        board[i][j] = False
+            return  best
+
+    def findBestMove(self, board, checkedBox):
+        bestMove = [-1, -1]
+        bestVal = -1000
+
+        for i in range(len(board)):
+            for j in range(len(board[i])):
+                if board[i][j] is False:
+                    board[i][j] = 'O'
+
+                    moveVal = self.minimax(board, 0, False)
+
+                    board[i][j] = False
+
+                    if moveVal > bestVal:
+                        bestMove[0] = i
+                        bestMove[1] = j
+                        bestVal = moveVal
+
+
+        print(bestVal)
+        print(bestMove)
+        return  bestMove
+
 class minimax:
     def __init__(self):
         self.player = 'X'

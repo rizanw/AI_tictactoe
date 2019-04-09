@@ -57,7 +57,7 @@ def main():
             ui.drawState(screen, regFont, "Your Turn")
             if mouseClicked:
                 ui.XMarker(screen, boxx, boxy, font=bigFont)
-                chekedBox[boxx][boxy] = True
+                chekedBox[boxx][boxy] = -1
                 mainBoard[boxx][boxy] = 'X'
                 pTurn = False
                 pygame.display.update()
@@ -72,16 +72,16 @@ def main():
             for i in range(0, 3):
                 for j in range(0, 3):
                     # print(mainBoard[i][j])
-                    if chekedBox[i][j] == False:
+                    if chekedBox[i][j] == 0:
                         depth += 1
 
-            cMove = mm.minimax(mainBoard, depth, +1)
+            cMove = mm.minimax(chekedBox, depth, +1)
 
             # comp = ai.findBestMove(checkedBox=chekedBox, board=mainBoard)
             cX = cMove[0]
             cY = cMove[1]
             ui.OMarker(screen, cX, cY, font=bigFont)
-            chekedBox[cX][cY] = True
+            chekedBox[cX][cY] = +1
             mainBoard[cX][cY] = 'O'
             pygame.display.update()
             pTurn = True
