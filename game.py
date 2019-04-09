@@ -3,8 +3,8 @@ import sys
 
 class Games:
     # constanta
-    WindowWidth = 840
-    WindowHeight = 540
+    WindowWidth = 420
+    WindowHeight = 520
     screenSize = [WindowWidth, WindowHeight]
     FPS = 30
     BoxSize = 100
@@ -39,8 +39,8 @@ class Games:
 
         pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen, width, height))
         pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen + Games.BoxSize + Games.GapSize, horLen, width, height))
-        pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen - Games.BoxSize - Games.GapSize, horLen, width, height))
-        pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen + (Games.BoxSize + Games.GapSize) * 2, horLen, width, height))
+        # pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen - Games.BoxSize - Games.GapSize, horLen, width, height))
+        # pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen + (Games.BoxSize + Games.GapSize) * 2, horLen, width, height))
 
         #Draw Horizontal Lines
         verLen = Games.XMargin
@@ -50,27 +50,20 @@ class Games:
 
         pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen, width, height))
         pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen + Games.BoxSize + Games.GapSize, width, height))
-        pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen + (Games.BoxSize + Games.GapSize) * 2, width, height))
-        pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen - Games.BoxSize - Games.GapSize, width, height))
+        # pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen + (Games.BoxSize + Games.GapSize) * 2, width, height))
+        # pygame.draw.rect(screen, LinesColor, pygame.Rect(verLen, horLen - Games.BoxSize - Games.GapSize, width, height))
 
-    def usedBoxChecked(pos):
-        # Marking used boxes
-        Boxes = []
-        for i in range(Games.BoardWidth):
-            Boxes.append([pos] * Games.BoardHeight)
-        return Boxes
-
-    def drawScore(screen, font, dScore, pScore, cScore):
+    def drawState(screen, font, state):
         # draw score board
         scoreBoard = font.render(
-            'Draw: ' + str(dScore) + '  ' + 'Player: ' + str(pScore) + '    ' + 'Computer: ' + str(cScore),
+            state,
             True,
             Games.GWhite,
             Games.BGColor
         )
         scoreBoardRect = scoreBoard.get_rect()
-        scoreBoardRect.x = Games.WindowWidth - 300
-        scoreBoardRect.y = Games.WindowHeight - 300
+        scoreBoardRect.x = 6
+        scoreBoardRect.y = Games.WindowHeight - 24
         screen.blit(scoreBoard, scoreBoardRect)
 
     def getCornerBox(boxx, boxy):
