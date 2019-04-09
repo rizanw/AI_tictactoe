@@ -21,8 +21,9 @@ def main():
 
     ai = alphabeta()
     apb = abp()
+    mm = minimax()
 
-    mainBoard = ai.usedBoxChecked(False)
+    mainBoard = ai.usedBoxChecked(0)
     chekedBox = ai.usedBoxChecked(False)
 
     pScore = 0
@@ -65,7 +66,16 @@ def main():
             ui.drawState(screen, regFont, "AI Turn     ")
             pygame.time.wait(500)
 
-            cMove = apb.alphabetapruning(mainBoard)
+            # cMove = apb.alphabetapruning(mainBoard)
+
+            depth = 0
+            for i in range(0, 3):
+                for j in range(0, 3):
+                    # print(mainBoard[i][j])
+                    if chekedBox[i][j] == False:
+                        depth += 1
+
+            cMove = mm.minimax(mainBoard, depth, +1)
 
             # comp = ai.findBestMove(checkedBox=chekedBox, board=mainBoard)
             cX = cMove[0]
