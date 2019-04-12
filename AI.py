@@ -237,6 +237,13 @@ class minimax:
     def game_over(self, state):
         return self.wins(state, -1) or self.wins(state, +1)
 
+    def endGame(self, state):
+        for x, row in enumerate(state):
+            for y, cell in enumerate(row):
+                if cell == 0:
+                    return False
+        return True
+
     def empty_cells(self, state):
         cells = []
 

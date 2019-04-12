@@ -86,65 +86,24 @@ def main():
             pygame.display.update()
             pTurn = True
 
-        pWins, cWins = endGame(mainBoard)
+        pWins = mm.wins(mainBoard, -1)
+        cWins = mm.wins(mainBoard, +1)
+        noWins = mm.endGame(mainBoard)
 
-        # for i in range(len(mainBoard)):
-        #     for j in range(len(mainBoard[i])):
-        #         if chekedBox[i][j] != False:
-        #             ui.drawState(screen, regFont, "Game Over     ")
-        #             mouseClicked = False
-        #             pygame.time.wait(500)
-        #             pygame.display.update()
-
+        print(pWins, cWins, noWins)
         if pWins:
             ui.drawState(screen, regFont, "Player Wins   ")
             pygame.time.wait(500)
             pygame.display.update()
-        elif cWins:
+        elif cWins == True and pWins == False:
             ui.drawState(screen, regFont, "Computer Wins   ")
             pygame.time.wait(500)
             pygame.display.update()
-        elif cWins == True and pWins == True:
+        if cWins == False and pWins == False and noWins == True:
             ui.drawState(screen, regFont, "Draw game. No Winner ")
             pygame.time.wait(500)
             pygame.display.update()
 
-        pygame.display.flip()
-        clock.tick(ui.FPS)
-
-def endGame(board):
-    if ((board[0][0] == board[1][0] == board[2][0] == 'X') or
-            (board[0][1] == board[1][1] == board[2][1] == 'X') or
-            (board[0][2] == board[1][2] == board[2][2] == 'X') or
-            (board[0][0] == board[0][1] == board[0][2] == 'X') or
-            (board[1][0] == board[1][1] == board[1][2] == 'X') or
-            (board[2][0] == board[2][1] == board[2][2] == 'X') or
-            (board[0][0] == board[1][1] == board[2][2] == 'X') or
-            (board[0][2] == board[1][1] == board[2][0] == 'X')):
-
-        playerWins = True
-        computerWins = False
-        return playerWins, computerWins
-
-
-    elif ((board[0][0] == board[1][0] == board[2][0] == 'O') or
-          (board[0][1] == board[1][1] == board[2][1] == 'O') or
-          (board[0][2] == board[1][2] == board[2][2] == 'O') or
-          (board[0][0] == board[0][1] == board[0][2] == 'O') or
-          (board[1][0] == board[1][1] == board[1][2] == 'O') or
-          (board[2][0] == board[2][1] == board[2][2] == 'O') or
-          (board[0][0] == board[1][1] == board[2][2] == 'O') or
-          (board[0][2] == board[1][1] == board[2][0] == 'O')):
-
-        playerWins = False
-        computerWins = True
-        return playerWins, computerWins
-
-
-    else:
-        playerWins = False
-        computerWins = False
-        return playerWins, computerWins
 
 if __name__ == '__main__':
     main()
